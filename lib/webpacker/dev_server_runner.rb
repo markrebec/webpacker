@@ -1,4 +1,5 @@
 require "shellwords"
+require "erb"
 require "yaml"
 require "socket"
 require "webpacker/runner"
@@ -14,7 +15,8 @@ module Webpacker
     private
       def load_config
         @config_file = File.join(@app_path, "config/webpacker.yml")
-        dev_server = YAML.load_file(@config_file)[ENV["RAILS_ENV"]]["dev_server"]
+        template = ERB.new(File.read(@config_file))
+        dev_server = YAML.load(template.result)[ENV["RAILS_ENV"]]["dev_server"]
 
         @hostname          = dev_server["host"]
         @port              = dev_server["port"]
